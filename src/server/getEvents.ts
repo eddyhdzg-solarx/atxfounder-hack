@@ -8,5 +8,6 @@ export const getEvents = async () => {
   if (error) {
     throw error;
   }
+
   return data;
 };

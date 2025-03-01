@@ -1,4 +1,4 @@
-import { FindList } from "@/components/FindList";
+import { EventTable } from "@/components/EventTable";
 import { StepList } from "@/components/StepList";
 import { getEvents } from "@/server";
 import { getFindEvents } from "@/utils/getFindEvents";
@@ -17,10 +17,7 @@ export default async function Home() {
           mergedEvents={mergedEvents.length}
           filteredEvents={findEvents.length}
         />
-        <div>
-          <pre>{JSON.stringify(events, null, 2)}</pre>
-        </div>
-        <FindList events={findEvents} />
+        <EventTable events={events} />
       </main>
     </div>
   );

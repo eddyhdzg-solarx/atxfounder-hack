@@ -1,32 +1,32 @@
 import { FindEvent } from "@/types";
 
-/**
- * Normalizes a URL by removing query parameters and ensuring it ends with a slash
- */
-function normalizeUrl(url: string): string {
-  // Remove query parameters
-  const urlWithoutParams = url.split("?")[0];
+function cleanUrl(url: string) {
+  try {
+    const urlObj = new URL(url);
 
-  // Ensure URL ends with slash
-  return urlWithoutParams.endsWith("/")
-    ? urlWithoutParams
-    : `${urlWithoutParams}/`;
+    // Ensure pathname ends with a single slash
+    let cleanPath = urlObj.pathname.replace(/\/+$/, "") + "/";
+
+    return `${urlObj.origin}${cleanPath}`;
+  } catch (e) {
+    return url; // Return original if parsing fails
+  }
 }
 
-/**
- * Filters out duplicate events based on normalized URLs
- */
 export function filterDuplicates(events: FindEvent[]): FindEvent[] {
+  // Filter out events with empty URLs and normalize remaining URLs
+  const normalizedEvents = events
+    .filter((event) => event.url && event.url.trim() !== "")
+    .map((event) => ({
+      ...event,
+      url: cleanUrl(event.url),
+    }));
+
   const seen = new Set<string>();
 
-  return events.filter((event) => {
-    const normalizedUrl = normalizeUrl(event.url);
-
-    if (seen.has(normalizedUrl)) {
-      return false;
-    }
-
-    seen.add(normalizedUrl);
+  return normalizedEvents.filter((event) => {
+    if (seen.has(event.url)) return false;
+    seen.add(event.url);
     return true;
   });
 }
