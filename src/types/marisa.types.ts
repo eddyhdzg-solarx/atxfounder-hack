@@ -4,12 +4,12 @@ export interface MarisaEventLink {
 }
 
 export type MarisaEvent = [
-  date: string,
-  blank: string,
+  startDate: string,
+  endDate: string,
   startTime: string,
   endTime: string,
   event: MarisaEventLink,
-  category: string,
-  organizer: string,
+  industry: string,
+  hostedBy: string,
   location: string
 ];
