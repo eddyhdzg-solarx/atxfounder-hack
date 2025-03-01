@@ -1,17 +1,14 @@
+import { ENTRE_SHEET_ID, ENTRE_SHEET_NAME, ENTRE_SHEET_RANGE } from "@/consts";
 import { EntreEvent } from "@/types";
-import { google } from "googleapis";
+import { getSheets } from "@/utils/getSheets";
 
 export async function getEntreEvents(): Promise<EntreEvent[]> {
-  const auth = await google.auth.getClient({
-    scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
-  });
-
-  const sheets = google.sheets({ version: "v4", auth });
-  const range = `${process.env.ENTRE_SHEET_NAME}!${process.env.ENTRE_SHEET_RANGE}`;
+  const sheets = await getSheets();
+  const range = `${ENTRE_SHEET_NAME}!${ENTRE_SHEET_RANGE}`;
 
   // First, get the spreadsheet data
   const response = await sheets.spreadsheets.get({
-    spreadsheetId: process.env.ENTRE_SHEET_ID,
+    spreadsheetId: ENTRE_SHEET_ID,
     ranges: [range],
     includeGridData: true,
   });

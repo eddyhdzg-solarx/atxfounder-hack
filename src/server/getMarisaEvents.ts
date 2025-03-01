@@ -1,17 +1,18 @@
+import {
+  MARISA_SHEET_ID,
+  MARISA_SHEET_NAME,
+  MARISA_SHEET_RANGE,
+} from "@/consts";
 import { MarisaEvent, MarisaEventLink } from "@/types";
-import { google } from "googleapis";
+import { getSheets } from "@/utils/getSheets";
 
 export async function getMarisaEvents(): Promise<MarisaEvent[]> {
-  const auth = await google.auth.getClient({
-    scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
-  });
-
-  const sheets = google.sheets({ version: "v4", auth });
-  const range = `${process.env.MARISA_SHEET_NAME}!${process.env.MARISA_SHEET_RANGE}`;
+  const sheets = await getSheets();
+  const range = `${MARISA_SHEET_NAME}!${MARISA_SHEET_RANGE}`;
 
   // First, get the spreadsheet data
   const response = await sheets.spreadsheets.get({
-    spreadsheetId: process.env.MARISA_SHEET_ID,
+    spreadsheetId: MARISA_SHEET_ID,
     ranges: [range],
     includeGridData: true,
   });
@@ -49,7 +50,7 @@ export async function getMarisaEvents(): Promise<MarisaEvent[]> {
   // Filter out rows that don't have event data
   // A row has event data if it has start time (column 2) and an event title (column 4)
   const eventsOnly = values.filter((row): row is MarisaEvent => {
-    return Boolean(row[2] && row[4]?.text); // Check if start time exists and event title exists
+    return Boolean(row[4]?.text); // Check event title exists
   });
 
   return eventsOnly;
