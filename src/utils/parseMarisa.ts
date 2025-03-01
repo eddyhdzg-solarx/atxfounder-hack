@@ -1,5 +1,4 @@
-import { MarisaEvent } from "@/types";
-import { FindEvent } from "./findEvents";
+import { FindEvent, MarisaEvent } from "@/types";
 
 /**
  * Parses a date and time string into an ISO date string, assuming CST timezone
