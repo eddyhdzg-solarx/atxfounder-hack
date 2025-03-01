@@ -1,25 +1,24 @@
 import { CURRENT_YEAR } from "@/consts";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { groq } from "@ai-sdk/groq";
 import { generateObject } from "ai";
-import { createWorkersAI } from "workers-ai-provider";
 import { z } from "zod";
 
 const schema = z.object({
   recipe: z.object({
-    title: z.string().optional(),
-    description: z.string().optional(),
-    start: z.string().optional(),
-    end: z.string().optional(),
-    for_investors: z.boolean().optional(),
-    free_drinks: z.boolean().optional(),
-    free_food: z.boolean().optional(),
-    location_name: z.string().optional(),
-    location_url: z.string().optional(),
-    staff_pick: z.boolean().optional(),
-    price: z.string().optional(),
-    needs_badge: z.boolean().optional(),
-    is_startup_event: z.boolean().optional(),
-    is_event_page: z.boolean().optional(),
+    title: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    start: z.string().nullable().optional(),
+    end: z.string().nullable().optional(),
+    for_investors: z.boolean().nullable().optional(),
+    free_drinks: z.boolean().nullable().optional(),
+    free_food: z.boolean().nullable().optional(),
+    location_name: z.string().nullable().optional(),
+    location_url: z.string().nullable().optional(),
+    staff_pick: z.boolean().nullable().optional(),
+    price: z.string().nullable().optional(),
+    needs_badge: z.boolean().nullable().optional(),
+    is_startup_event: z.boolean().nullable().optional(),
+    is_event_page: z.boolean().nullable().optional(),
   }),
 });
 
@@ -27,6 +26,7 @@ export async function getEventData(data: string) {
   const system = `
 You help extract data from a text file that contains event data.
 
+Guidelines:
 Guidelines:
 1. title: Name of the event, up to 10 words
 2. description: Description of the event, concise, up to 10 words if a big company is hosting it put by the company name like by Google, by Meta, by Amazon, etc. Extract it from the content, and put it in a simply way if needed.
@@ -46,10 +46,8 @@ Guidelines:
 
   const prompt = `Extracted data from this file: ${data}`;
 
-  const { env } = getCloudflareContext();
-  const workersai = createWorkersAI({ binding: env.AI });
   const result = await generateObject({
-    model: workersai("@cf/meta/llama-3.1-8b-instruct"),
+    model: groq("gemma2-9b-it"),
     system,
     prompt,
     schema,

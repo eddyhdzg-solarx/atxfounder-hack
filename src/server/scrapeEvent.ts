@@ -7,14 +7,11 @@ export async function scrapeEvent(url: string) {
   try {
     // Get the markdown content
 
-    console.log("url", url);
     const markdownResult = await getMarkdown(url);
 
-    console.log("markdownResult", 1);
     if (!markdownResult.success || !markdownResult.data) {
       throw new Error("Failed to fetch markdown content");
     }
-    console.log("markdownResult", 2);
 
     // Extract event data
     const eventData = await getEventData(markdownResult.data);

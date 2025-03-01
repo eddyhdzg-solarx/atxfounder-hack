@@ -1,6 +1,8 @@
 "use client";
 
+import { updateEventAction } from "@/actions/updateEvent";
 import { scrapeEvent } from "@/server/scrapeEvent";
+import { DBEvent } from "@/types";
 import { Database } from "@/types/supabase.types";
 import { Button } from "@/ui/button";
 import {
@@ -13,20 +15,46 @@ import {
   TableRow,
 } from "@/ui/table";
 import { format } from "date-fns";
-import { ExternalLink, RefreshCw } from "lucide-react";
+import { ExternalLink, RefreshCw, Save } from "lucide-react";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 interface ScrapedTableProps {
   events: Database["public"]["Tables"]["events"]["Row"][];
 }
 
-export const ScrapedTable: FC<ScrapedTableProps> = ({ events }) => {
-  const handleScrape = async (url: string) => {
+export const ScrapedTable: FC<ScrapedTableProps> = ({
+  events: initialEvents,
+}) => {
+  const [events, setEvents] = useState<Partial<DBEvent>[]>(initialEvents);
+
+  const handleScrape = async (url: string, eventId: number | undefined) => {
     if (!url) return;
-    console.log("Scraping event:", url);
+
     const res = await scrapeEvent(url);
-    console.log(res);
+
+    if (res.success && res.data) {
+      res.data.end;
+      // Update events with the actual scraped data instead of demo data
+      setEvents(
+        events.map((event) =>
+          event.id === eventId ? { ...event, ...res.data } : event
+        )
+      );
+    }
+  };
+
+  const handleSaveToSupabase = async (eventId: number | undefined) => {
+    if (!eventId) return;
+
+    const event = events.find((e) => e.id === eventId);
+    if (!event) return;
+
+    try {
+      await updateEventAction(event as DBEvent);
+    } catch (error) {
+      console.error("Error saving to Supabase:", error);
+    }
   };
 
   return (
@@ -43,7 +71,10 @@ export const ScrapedTable: FC<ScrapedTableProps> = ({ events }) => {
             <TableHead>URL</TableHead>
             <TableHead className="w-[200px]">Date & Time</TableHead>
             <TableHead>Price</TableHead>
-            <TableHead>Event Type</TableHead>
+            <TableHead>Staff Pick</TableHead>
+            <TableHead>Free Food?</TableHead>
+            <TableHead>Free Drinks?</TableHead>
+            <TableHead>For Investors?</TableHead>
             <TableHead>Start</TableHead>
             <TableHead>End</TableHead>
             <TableHead>Is Event Page</TableHead>
@@ -64,15 +95,24 @@ export const ScrapedTable: FC<ScrapedTableProps> = ({ events }) => {
 
             return (
               <TableRow key={index}>
-                <TableCell>
+                <TableCell className="flex gap-2">
                   {event.url && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleScrape(event.url!)}
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                    </Button>
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleScrape(event.url!, event.id)}
+                      >
+                        <RefreshCw className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleSaveToSupabase(event.id)}
+                      >
+                        <Save className="h-4 w-4" />
+                      </Button>
+                    </>
                   )}
                 </TableCell>
                 <TableCell>{event.id}</TableCell>
@@ -124,16 +164,10 @@ export const ScrapedTable: FC<ScrapedTableProps> = ({ events }) => {
                 <TableCell>
                   {event.price !== null ? `$${event.price}` : null}
                 </TableCell>
-                <TableCell>
-                  <div className="flex flex-col gap-1 text-xs">
-                    {event.is_startup_event && <span>Startup Event</span>}
-                    {event.for_investors && <span>For Investors</span>}
-                    {event.free_drinks && <span>Free Drinks</span>}
-                    {event.free_food && <span>Free Food</span>}
-                    {event.needs_badge && <span>Badge Required</span>}
-                    {event.staff_pick && <span>Staff Pick</span>}
-                  </div>
-                </TableCell>
+                <TableCell>{event.staff_pick ? "🔥" : null}</TableCell>
+                <TableCell>{event.free_food ? "🌮" : null}</TableCell>
+                <TableCell>{event.free_drinks ? "🥃" : null}</TableCell>
+                <TableCell>{event.for_investors ? "🕵" : null}</TableCell>
                 <TableCell>{start || null}</TableCell>
                 <TableCell>{end || null}</TableCell>
                 <TableCell>{event.is_event_page ? "Yes" : null}</TableCell>
