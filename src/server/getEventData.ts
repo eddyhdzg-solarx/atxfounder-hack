@@ -47,7 +47,7 @@ Guidelines:
   const prompt = `Extracted data from this file: ${data}`;
 
   const result = await generateObject({
-    model: groq("gemma2-9b-it"),
+    model: groq("llama-3.1-8b-instant"),
     system,
     prompt,
     schema,
