@@ -1,21 +1,11 @@
-import { EntreEvent, MarisaEvent } from "@/types";
-import { z } from "zod";
+import { EntreEvent, FindEvent, MarisaEvent } from "@/types";
 import { processEntreEvents } from "./parseEntre";
 import { processMarisaEvents } from "./parseMarisa";
-
-// Define the schema for the unified event format
-export const FindEventSchema = z.object({
-  find_date: z.string().nullable().optional(),
-  find_title: z.string().nullable().optional(),
-  url: z.string(),
-});
-
-export type FindEvent = z.infer<typeof FindEventSchema>;
 
 /**
  * Merges and sorts events from different sources into a unified format
  */
-export function findEvents(
+export function mergeEvents(
   marisaEvents: MarisaEvent[],
   entreEvents: EntreEvent[]
 ): FindEvent[] {

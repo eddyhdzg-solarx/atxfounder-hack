@@ -1,5 +1,4 @@
-import { EntreEvent } from "@/types";
-import { FindEvent } from "./findEvents";
+import { EntreEvent, FindEvent } from "@/types";
 
 /**
  * Parses an Entre event date and time string into an ISO date string, assuming CST timezone
