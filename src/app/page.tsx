@@ -1,10 +1,12 @@
 import { FindList } from "@/components/FindList";
 import { StepList } from "@/components/StepList";
+import { getEvents } from "@/server";
 import { getFindEvents } from "@/utils/getFindEvents";
 
 export default async function Home() {
   const { marisaEvents, entreEvents, mergedEvents, findEvents } =
     await getFindEvents();
+  const events = await getEvents();
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -15,6 +17,9 @@ export default async function Home() {
           mergedEvents={mergedEvents.length}
           filteredEvents={findEvents.length}
         />
+        <div>
+          <pre>{JSON.stringify(events, null, 2)}</pre>
+        </div>
         <FindList events={findEvents} />
       </main>
     </div>
