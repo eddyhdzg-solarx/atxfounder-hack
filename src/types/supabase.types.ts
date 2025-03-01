@@ -28,6 +28,7 @@ export type Database = {
           price: number | null
           staff_pick: boolean | null
           start: string | null
+          status: Database["public"]["Enums"]["status"] | null
           title: string | null
           url: string | null
         }
@@ -49,6 +50,7 @@ export type Database = {
           price?: number | null
           staff_pick?: boolean | null
           start?: string | null
+          status?: Database["public"]["Enums"]["status"] | null
           title?: string | null
           url?: string | null
         }
@@ -70,6 +72,7 @@ export type Database = {
           price?: number | null
           staff_pick?: boolean | null
           start?: string | null
+          status?: Database["public"]["Enums"]["status"] | null
           title?: string | null
           url?: string | null
         }
@@ -83,7 +86,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      status: "scraped"
     }
     CompositeTypes: {
       [_ in never]: never

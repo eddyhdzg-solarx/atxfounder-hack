@@ -1,4 +1,7 @@
-import { ThemeProvider } from "@/components/theme-provider";
+import { Navigation } from "@/components/Navigation";
+
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { Toaster } from "@/ui/sonner";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -22,24 +25,20 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
   return (
-    <>
-      <html lang="en" suppressHydrationWarning>
-        <head />
+    <ThemeProvider>
+      <html key="root" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          id="body"
+          key="body"
+          className={`${geistSans.variable} ${geistMono.variable} relative antialiased`}
         >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
+          <Navigation key="nav" />
+          {children}
+          <Toaster key="toaster" />
         </body>
       </html>
-    </>
+    </ThemeProvider>
   );
 }
