@@ -1,4 +1,4 @@
-import { EventTable } from "@/components/EventTable";
+import { ScrapedTable } from "@/components/ScrapedTable";
 import { StepList } from "@/components/StepList";
 import { getEvents } from "@/server";
 import { getFindEvents } from "@/utils/getFindEvents";
@@ -10,14 +10,15 @@ export default async function Home() {
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start max-w-[100%] w-full">
         <StepList
           marisaEvents={marisaEvents.length}
           entreEvents={entreEvents.length}
           mergedEvents={mergedEvents.length}
           filteredEvents={findEvents.length}
+          dbEvents={events.length}
         />
-        <EventTable events={events} />
+        <ScrapedTable events={events} />
       </main>
     </div>
   );

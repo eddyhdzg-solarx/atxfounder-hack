@@ -5,6 +5,7 @@ interface StepListProps {
   entreEvents: number;
   mergedEvents: number;
   filteredEvents: number;
+  dbEvents: number;
 }
 
 export const StepList: FC<StepListProps> = ({
@@ -12,6 +13,7 @@ export const StepList: FC<StepListProps> = ({
   entreEvents,
   mergedEvents,
   filteredEvents,
+  dbEvents,
 }) => {
   return (
     <ul className="flex flex-col gap-2">
@@ -30,6 +32,10 @@ export const StepList: FC<StepListProps> = ({
       <li className="flex gap-2">
         <h2 className="text-2xl font-bold">Filtered Duplicates Events:</h2>
         <pre className="text-2xl font-mono">{filteredEvents}</pre>
+      </li>
+      <li className="flex gap-2">
+        <h2 className="text-2xl font-bold">DB Events:</h2>
+        <pre className="text-2xl font-mono">{dbEvents}</pre>
       </li>
     </ul>
   );
