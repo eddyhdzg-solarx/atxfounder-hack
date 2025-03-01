@@ -1,3 +1,6 @@
+"use client";
+
+import { scrapeEvent } from "@/server/scrapeEvent";
 import { Database } from "@/types/supabase.types";
 import { Button } from "@/ui/button";
 import {
@@ -10,7 +13,7 @@ import {
   TableRow,
 } from "@/ui/table";
 import { format } from "date-fns";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -19,12 +22,20 @@ interface ScrapedTableProps {
 }
 
 export const ScrapedTable: FC<ScrapedTableProps> = ({ events }) => {
+  const handleScrape = async (url: string) => {
+    if (!url) return;
+    console.log("Scraping event:", url);
+    const res = await scrapeEvent(url);
+    console.log(res);
+  };
+
   return (
     <div className="w-full">
       <Table>
         <TableCaption>A list of upcoming events in Austin.</TableCaption>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[100px]">Scrape</TableHead>
             <TableHead className="w-[100px]">ID</TableHead>
             <TableHead>Event</TableHead>
             <TableHead>Description</TableHead>
@@ -53,6 +64,17 @@ export const ScrapedTable: FC<ScrapedTableProps> = ({ events }) => {
 
             return (
               <TableRow key={index}>
+                <TableCell>
+                  {event.url && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleScrape(event.url!)}
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                    </Button>
+                  )}
+                </TableCell>
                 <TableCell>{event.id}</TableCell>
                 <TableCell className="font-medium">
                   {event.find_title || event.title || "Untitled Event"}
